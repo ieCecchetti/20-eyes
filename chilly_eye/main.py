@@ -1,6 +1,5 @@
 import tkinter as tk
 from threading import Thread
-from queue import Queue, Empty
 import time
 import os
 import sys
@@ -19,8 +18,16 @@ def play_notification_sound():
     if getattr(sys, "frozen", False):  # If running as a PyInstaller bundle
         base_path = sys._MEIPASS
     else:
-        base_path = os.path.dirname(__file__)
+        # Use the root directory of the project during development
+        base_path = os.path.dirname(
+            os.path.dirname(os.path.abspath(__file__))
+        )  # Root directory
     sound_path = os.path.join(base_path, "notification.mp3")
+
+    # Check if the file exists
+    if not os.path.exists(sound_path):
+        print(f"Error: Sound file not found at {sound_path}")
+        return
 
     # Play the sound
     mixer.init()
@@ -28,30 +35,35 @@ def play_notification_sound():
     mixer.music.play()
 
 
-def background_loop(queue, interval_minutes=20):
-    global custom_snooze
+def reminder_loop(interval_minutes=20):
+    global popup_open, current_popup, custom_snooze
 
     while True:
-        snooze_interval = custom_snooze if custom_snooze is not None else interval_minutes
-        custom_snooze = None 
-        print(f"⏳ Waiting for {snooze_interval} minutes until the next break...")
-        time.sleep(snooze_interval * 60)
-        print("🔔 Time to show popup!")
-        queue.put("SHOW_POPUP")
+        # Wait for the interval
+        print(f"⏳ Waiting for {interval_minutes} minutes...")
+        time.sleep(interval_minutes * 60)
+
+        # Show the popup and wait for user interaction
+        popup_open = True
+        custom_snooze = None  # Reset custom snooze
+        show_popup()
+
+        # Wait until the popup is closed
+        while popup_open:
+            time.sleep(1)
+
+        # Use the custom snooze interval if set, otherwise use the default interval
+        interval_minutes = (
+            custom_snooze if custom_snooze is not None else INTERVAL_MINUTES
+        )
 
 
 def show_popup():
     global popup_open, current_popup, custom_snooze
 
-    # If a popup is already open, close it
-    if popup_open and current_popup is not None:
-        current_popup.destroy()
-        popup_open = False
-
     # Play the notification sound
     play_notification_sound()
 
-    popup_open = True  # Set the flag to indicate a popup is open
     popup = tk.Toplevel()
     current_popup = popup  # Store the reference to the current popup
     popup.title("Break Time!")
@@ -71,7 +83,7 @@ def show_popup():
         popup.destroy()
 
     def snooze_popup():
-        global popup_open, current_popup, custom_snooze
+        global custom_snooze
         try:
             snooze_minutes = int(snooze_entry.get())
             custom_snooze = snooze_minutes
@@ -100,32 +112,15 @@ def show_popup():
     btn_exit.pack(pady=5)
 
 
-def check_queue(root, queue):
-    try:
-        message = queue.get_nowait()
-        if message == "SHOW_POPUP":
-            show_popup()
-    except Empty:
-        pass
-    root.after(1000, check_queue, root, queue)
-
-
 def main():
-    print("⏰ Break reminder started. You'll be prompted every few seconds.")
-    queue = Queue()
+    print("⏰ Break reminder started. You'll be prompted every 20 minutes.")
 
-    # Start the background thread
-    Thread(target=background_loop, args=(queue, INTERVAL_MINUTES), daemon=True).start()
+    # Start the reminder loop in a separate thread
+    Thread(target=reminder_loop, args=(INTERVAL_MINUTES,), daemon=True).start()
 
     # Create and run the hidden root window
     root = tk.Tk()
     root.withdraw()  # Keep root hidden
-
-    # Show the first popup instantly
-    show_popup()
-
-    # Start checking the queue for subsequent popups
-    root.after(1000, check_queue, root, queue)
     root.mainloop()  # 🔁 Keeps app alive
 
 
