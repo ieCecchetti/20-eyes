@@ -2,14 +2,30 @@ import tkinter as tk
 from threading import Thread
 from queue import Queue, Empty
 import time
-import sys  # Import sys to exit the script
+import os
+import sys
+from pygame import mixer
 
 
-INTERVAL_MINUTES = 20  
+INTERVAL_MINUTES = 20
 # Global variables to track the popup state
 popup_open = False
 current_popup = None  # Reference to the currently open popup
 custom_snooze = None  # Custom snooze duration in minutes
+
+
+def play_notification_sound():
+    # Get the path to the notification.mp3 file
+    if getattr(sys, "frozen", False):  # If running as a PyInstaller bundle
+        base_path = sys._MEIPASS
+    else:
+        base_path = os.path.dirname(__file__)
+    sound_path = os.path.join(base_path, "notification.mp3")
+
+    # Play the sound
+    mixer.init()
+    mixer.music.load(sound_path)
+    mixer.music.play()
 
 
 def background_loop(queue, interval_minutes=20):
@@ -31,6 +47,9 @@ def show_popup():
     if popup_open and current_popup is not None:
         current_popup.destroy()
         popup_open = False
+
+    # Play the notification sound
+    play_notification_sound()
 
     popup_open = True  # Set the flag to indicate a popup is open
     popup = tk.Toplevel()

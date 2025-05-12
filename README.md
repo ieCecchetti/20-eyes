@@ -49,14 +49,14 @@ poetry run img-converter alarm.png alarm.icns
 ```
 
 Then:
-   - Replace `alarm.png` with the path to your source image;
-   - The output file will be `alarm.icns`;
+- Replace `alarm.png` with the path to your source image;
+- The output file will be `alarm.icns`;
 
-2. Build the Executable
+1. Build the Executable
 Use PyInstaller to create the standalone executable:
 
 ```bash
-poetry run pyinstaller --clean --onefile --windowed --icon=alarm.icns chilly_eye/main.py --noconfirm
+poetry run pyinstaller --clean --onefile --windowed --icon=alarm.icns --add-data "notification.mp3:." chilly_eye/main.py --noconfirm
 ```
 
 - --clean: Clears PyInstaller's cache before building.
@@ -64,6 +64,7 @@ poetry run pyinstaller --clean --onefile --windowed --icon=alarm.icns chilly_eye
 - --windowed: Ensures the app runs without a terminal window.
 - --icon=alarm.icns: Specifies the custom icon for the application.
 - --noconfirm: Skips confirmation prompts during the build process.
+- --add-data: add the additional file selected to the build. (like the notification)
 
 The executable will be created in the dist folder.
 
