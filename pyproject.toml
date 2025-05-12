@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "chilly-eye"
+version = "0.1.0"
+description = ""
+authors = ["Enrico Cecchetti <enrico.cecchetti@kcitylabs.fr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+tk = "^0.1.0"
+win10toast = {version = "^0.9", optional = true}
+
+[tool.poetry.group.dev.dependencies]
+pyinstaller = { version = "^6.13.0", markers = "python_version < '3.14'" }
+pillow = "^11.2.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+chill = "chilly_eye.main:main"
+img-converter = "chilly_eye.converter:main"
