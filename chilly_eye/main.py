@@ -5,123 +5,137 @@ import os
 import sys
 from pygame import mixer
 
-
-INTERVAL_MINUTES = 20
-# Global variables to track the popup state
-popup_open = False
-current_popup = None  # Reference to the currently open popup
-custom_snooze = None  # Custom snooze duration in minutes
+# Default fallback interval
+INTERVAL_MINUTES = 20.0  # Used only if setup is skipped or fails
+custom_snooze = None
+interval_minutes = None
+root = None
 
 
 def play_notification_sound():
-    # Get the path to the notification.mp3 file
-    if getattr(sys, "frozen", False):  # If running as a PyInstaller bundle
-        base_path = sys._MEIPASS
-    else:
-        # Use the root directory of the project during development
-        base_path = os.path.dirname(
-            os.path.dirname(os.path.abspath(__file__))
-        )  # Root directory
+    base_path = (
+        sys._MEIPASS
+        if getattr(sys, "frozen", False)
+        else os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    )
     sound_path = os.path.join(base_path, "notification.mp3")
 
-    # Check if the file exists
     if not os.path.exists(sound_path):
-        print(f"Error: Sound file not found at {sound_path}")
+        print(f"🔊 Sound file not found: {sound_path}")
         return
 
-    # Play the sound
     mixer.init()
     mixer.music.load(sound_path)
     mixer.music.play()
 
 
-def reminder_loop(interval_minutes=20):
-    global popup_open, current_popup, custom_snooze
+def reminder_loop():
+    global custom_snooze, interval_minutes
+
+    print(f"⏳ Initial wait for {interval_minutes} minutes...")
+    time.sleep(interval_minutes * 60)
 
     while True:
-        # Wait for the interval
-        print(f"⏳ Waiting for {interval_minutes} minutes...")
-        time.sleep(interval_minutes * 60)
+        popup_window = popup()
+        popup_window.wait_window()  # 🛑 BLOCKS until popup is closed
 
-        # Show the popup and wait for user interaction
-        popup_open = True
-        custom_snooze = None  # Reset custom snooze
-        show_popup()
+        delay = custom_snooze if custom_snooze is not None else interval_minutes
+        custom_snooze = None
 
-        # Wait until the popup is closed
-        while popup_open:
-            time.sleep(1)
-
-        # Use the custom snooze interval if set, otherwise use the default interval
-        interval_minutes = (
-            custom_snooze if custom_snooze is not None else INTERVAL_MINUTES
-        )
+        print(f"⏳ Waiting {delay} minutes before next reminder...")
+        time.sleep(delay * 60)
 
 
-def show_popup():
-    global popup_open, current_popup, custom_snooze
+def popup():
+    global custom_snooze
 
-    # Play the notification sound
     play_notification_sound()
+    popup_win = tk.Toplevel()
+    popup_win.title("Break Time!")
+    popup_win.geometry("300x200")
+    popup_win.attributes("-topmost", True)
+    popup_win.focus_force()
+    popup_win.lift()
 
-    popup = tk.Toplevel()
-    current_popup = popup  # Store the reference to the current popup
-    popup.title("Break Time!")
-    popup.geometry("300x200")
-    popup.attributes("-topmost", True)  # Ensure the popup is always on top
-    popup.wm_attributes("-topmost", True)  # Additional topmost setting
-    popup.focus_force()  # Force focus on the popup
-    popup.lift()  # Bring the popup to the front
-
-    label = tk.Label(popup, text="Time for a quick break!", font=("Arial", 14))
-    label.pack(pady=10)
+    tk.Label(popup_win, text="Time for a quick break!", font=("Arial", 14)).pack(
+        pady=10
+    )
 
     def close_popup():
-        global popup_open, current_popup
-        popup_open = False  # Reset the flag when the popup is closed
-        current_popup = None  # Clear the reference to the popup
-        popup.destroy()
+        popup_win.destroy()
 
     def snooze_popup():
         global custom_snooze
         try:
-            snooze_minutes = int(snooze_entry.get())
-            custom_snooze = snooze_minutes
-            print(f"Snoozed for {snooze_minutes} minutes.")
+            val = float(snooze_entry.get())
+            if val <= 0:
+                raise ValueError
+            custom_snooze = val
+            print(f"😴 Snoozed for {val} minutes.")
         except ValueError:
-            print("Invalid snooze value. Please enter a valid number.")
+            print("⚠️ Invalid snooze value.")
         close_popup()
 
     def exit_script():
-        print("Exiting the script...")
-        sys.exit()  # Exit the script
+        print("👋 Exiting.")
+        root.destroy()  # Exits mainloop
+        sys.exit()
 
-    btn_got_it = tk.Button(popup, text="Got it!", command=close_popup)
-    btn_got_it.pack(pady=5)
+    tk.Button(popup_win, text="Got it!", command=close_popup).pack(pady=5)
 
-    snooze_frame = tk.Frame(popup)
-    snooze_frame.pack(pady=5)
-    snooze_label = tk.Label(snooze_frame, text="Snooze in:")
-    snooze_label.pack(side=tk.LEFT, padx=5)
-    snooze_entry = tk.Entry(snooze_frame, width=5)
+    frame = tk.Frame(popup_win)
+    frame.pack(pady=5)
+    tk.Label(frame, text="Snooze (min):").pack(side=tk.LEFT, padx=5)
+    snooze_entry = tk.Entry(frame, width=5)
     snooze_entry.pack(side=tk.LEFT, padx=5)
-    btn_snooze = tk.Button(snooze_frame, text="Snooze", command=snooze_popup)
-    btn_snooze.pack(side=tk.LEFT, padx=5)
+    tk.Button(frame, text="Snooze", command=snooze_popup).pack(side=tk.LEFT, padx=5)
 
-    btn_exit = tk.Button(popup, text="Exit", command=exit_script)
-    btn_exit.pack(pady=5)
+    tk.Button(popup_win, text="Exit", command=exit_script).pack(pady=5)
+    snooze_entry.focus_set()
+
+    return popup_win
+
+
+def show_setup_window(root):
+    setup = tk.Toplevel()
+    setup.title("Set Reminder Interval")
+    setup.geometry("300x150")
+    setup.attributes("-topmost", True)
+    setup.focus_force()
+    setup.lift()
+
+    tk.Label(setup, text="Set interval (minutes):", font=("Arial", 12)).pack(pady=10)
+
+    entry = tk.Entry(setup, width=10)
+    entry.pack(pady=5)
+    entry.insert(0, "20")
+    entry.focus_set()
+
+    def start_reminder():
+        global interval_minutes
+        try:
+            val = float(entry.get())
+            if val <= 0:
+                raise ValueError
+            interval_minutes = val
+            print(f"✅ Starting with interval: {interval_minutes} minutes.")
+            setup.destroy()
+            Thread(target=reminder_loop, daemon=True).start()
+        except ValueError:
+            print("⚠️ Invalid interval. Please enter a positive number.")
+
+    tk.Button(setup, text="Start", command=start_reminder).pack(pady=10)
 
 
 def main():
-    print("⏰ Break reminder started. You'll be prompted every 20 minutes.")
+    global root
+    print("🚀 20-20-20 break reminder...")
 
-    # Start the reminder loop in a separate thread
-    Thread(target=reminder_loop, args=(INTERVAL_MINUTES,), daemon=True).start()
-
-    # Create and run the hidden root window
     root = tk.Tk()
-    root.withdraw()  # Keep root hidden
-    root.mainloop()  # 🔁 Keeps app alive
+    root.withdraw()
+
+    show_setup_window(root)
+    root.mainloop()
 
 
 if __name__ == "__main__":
