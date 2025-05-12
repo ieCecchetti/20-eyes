@@ -56,7 +56,7 @@ Then:
 Use PyInstaller to create the standalone executable:
 
 ```bash
-poetry run pyinstaller --clean --onefile --windowed --icon=alarm.icns --add-data "notification.mp3:." chilly_eye/main.py --noconfirm
+poetry run pyinstaller --clean --onefile --windowed --icon=alarm.icns --add-data "notification.mp3:." chilly_eye/main.py --name "EyeBreakReminder" --noconfirm
 ```
 
 - --clean: Clears PyInstaller's cache before building.
@@ -78,8 +78,10 @@ Open the application using:
 
 ```bash
 cd path/to/project
-open dist/main.app
+open dist/EyeBreakReminder.app
 ```
+
+want to add it to your programs!? then just go into dist folder >> Right click >> "Make an alias" and bring it in application. Enjoy
 
 ### Windows
 
@@ -87,7 +89,7 @@ Open the application using:
 
 ```bash
 cd path/to/project
-./dist/main
+./dist/EyeBreakReminder
 ```
 
 ### Alternatively
