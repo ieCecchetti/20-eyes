@@ -71,6 +71,21 @@ public extension BreakTimer {
         }
     }
 
+    /// Applies a settings edit. Only changes to when it rings restart the countdown;
+    /// the live state comes from `self`, since the form's copy may be stale.
+    func applyingEdit(_ edited: BreakTimer, now: Date, calendar: Calendar = .current) -> BreakTimer {
+        var t = edited
+        t.enabled = enabled
+        t.nextFire = nextFire
+        t.pausedRemaining = pausedRemaining
+        t.round = round
+        guard enabled, edited.kind != kind || edited.interval != interval || edited.clockTimes != clockTimes
+        else { return t }
+        t.restart(now: now, calendar: calendar)
+        if isPaused { t.pause(now: now) }
+        return t
+    }
+
     func isDue(at now: Date) -> Bool {
         enabled && !isPaused && (nextFire.map { $0 <= now } ?? false)
     }

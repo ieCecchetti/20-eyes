@@ -138,6 +138,36 @@ final class ChillyCoreTests: XCTestCase {
         XCTAssertTrue(loaded.timers[0].canFinishEarly)
     }
 
+    func testEditKeepsCountdownUnlessTimingChanges() {
+        let now = date(2026, 10, 22, 10)
+        var live = BreakTimer(category: category(.repeating))
+        live.restart(now: now)
+        let later = now.addingTimeInterval(5 * 60)
+
+        var edit = live
+        edit.allowDone = false
+        edit.message = "new"
+        edit.nextFire = nil // stale form copy must not win
+        let kept = live.applyingEdit(edit, now: later)
+        XCTAssertEqual(kept.nextFire, live.nextFire)
+        XCTAssertEqual(kept.allowDone, false)
+        XCTAssertEqual(kept.message, "new")
+
+        edit.interval = 30 * 60
+        XCTAssertEqual(live.applyingEdit(edit, now: later).nextFire, later.addingTimeInterval(30 * 60))
+
+        var paused = live
+        paused.pause(now: later)
+        let pausedEdit = paused.applyingEdit(edit, now: later)
+        XCTAssertTrue(pausedEdit.isPaused)
+        XCTAssertEqual(pausedEdit.pausedRemaining, 30 * 60)
+
+        var off = live
+        off.enabled = false
+        off.nextFire = nil
+        XCTAssertNil(off.applyingEdit(edit, now: later).nextFire)
+    }
+
     func testFormatCountdown() {
         XCTAssertEqual(formatCountdown(59.2), "1:00")
         XCTAssertEqual(formatCountdown(20 * 60), "20:00")
