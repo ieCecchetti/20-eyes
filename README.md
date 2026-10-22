@@ -42,15 +42,24 @@
 - **Menu bar countdown** for the soonest timer you've pinned ("Show countdown in menu bar" on each timer). Click it to see every timer, sorted by which rings next, with pause / take break now on each.
 - **Many timers, grouped by category.** New timer → pick a category (Eyes, Posture, Water, Stretch, Pomodoro, Countdown, Scheduled, Custom, or your own) → it pre-fills sensible defaults → tweak.
 - **Timer types:** repeating, pomodoro (long break every N rounds), one-shot countdown, scheduled at clock times.
-- **Break style per timer:** full-screen blurred overlay on every display, or a small popup. Skip, snooze, or the break ends by itself when its countdown finishes.
+- **Break style per timer:** full-screen blurred overlay on every display, or a small popup. The break ends by itself when its countdown finishes. You can also:
+  - **Done:** end it early, and it still counts as taken. Shown only if the timer has *Allow Done* on, so you can make a break strict.
+  - **Skip:** counts as skipped.
+  - **Snooze:** brings it back a few minutes later.
 - **Active hours per timer**, for example Mon–Fri 9:00–18:00.
 - **Smart pausing:**
   - when you're idle, the screen is locked or the Mac sleeps, timers are held, and repeating timers restart when you return (you already rested)
-  - breaks are postponed during calls (camera or mic in use) and while a fullscreen app is in front
+  - breaks wait while you're in a call (camera or mic in use). Fullscreen apps, like an editor, do **not** hold breaks back.
 - **Pause all** for 30 min, 1 h, until tomorrow, or until resumed. Global shortcut **⌃⌥⌘P**.
 - **Stats:** breaks taken / skipped / snoozed per day, and a day streak.
 - **Widget** (medium): the next 3 timers with live countdowns.
 - **Launch at login.**
+- **Editing keeps your countdown:** only changing the type, interval or clock times restarts a timer.
+- **Built-in guide:** Settings → Guide explains all of this inside the app.
+
+<p align="center">
+  <img src="docs/images/guide.png" width="520" alt="The in-app Guide tab">
+</p>
 
 ## Requirements
 

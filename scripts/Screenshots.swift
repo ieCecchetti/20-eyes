@@ -28,6 +28,7 @@ struct Screenshots {
                       snoozeMinutes: 5, overlay: true, finish: { _ in })
                 .opacity(0.6) // offscreen the blur has no desktop behind it; let the wallpaper show through
         }.frame(width: 1280, height: 760), to: out, "overlay.png")
+        render(GuideTab().frame(width: 620, height: 850).background(panel(12)), to: out, "guide.png")
         var draft = BreakTimer(category: state.categories[4])
         draft.name = "Deep work"
         render(TimerForm(timer: draft, onSave: { _ in }).environment(engine).background(panel(12)), to: out, "new-timer.png")

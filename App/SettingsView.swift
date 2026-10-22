@@ -9,6 +9,7 @@ struct SettingsView: View {
             CategoriesTab().tabItem { Label("Categories", systemImage: "square.grid.2x2") }
             GeneralTab().tabItem { Label("General", systemImage: "gearshape") }
             StatsTab().tabItem { Label("Stats", systemImage: "chart.bar") }
+            GuideTab().tabItem { Label("Guide", systemImage: "info.circle") }
         }
         .frame(width: 620, height: 480)
         .onAppear { NSApp.activate(ignoringOtherApps: true) }
@@ -95,7 +96,6 @@ private struct GeneralTab: View {
             }
             Section("Don't interrupt") {
                 Toggle("Postpone breaks during calls (camera or mic in use)", isOn: $engine.state.settings.postponeDuringCalls)
-                Toggle("Postpone breaks while a fullscreen app is in front", isOn: $engine.state.settings.postponeDuringFullscreen)
             }
             Section("Breaks") {
                 LabeledContent("Snooze length (minutes)") {

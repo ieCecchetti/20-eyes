@@ -121,7 +121,6 @@ public struct AppSettings: Codable, Hashable, Sendable {
     public var pauseWhenIdle = true
     public var idleMinutes: Double = 5
     public var postponeDuringCalls = true
-    public var postponeDuringFullscreen = true
     public var snoozeMinutes: Double = 5
 
     public init() {}
