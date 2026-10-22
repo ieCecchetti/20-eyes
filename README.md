@@ -21,23 +21,38 @@ Native Swift / SwiftUI, macOS 14+, with a WidgetKit widget.
 
 ## Requirements
 
-- macOS 14 Sonoma or later
+- A Mac with Apple Silicon (M1 or later). Intel Macs are not supported.
+- macOS 14 Sonoma or later.
+
+## Download
+
+1. Get the latest `ChillyEye-x.y.z.dmg` from [Releases](https://github.com/ieCecchetti/20-eyes/releases/latest).
+2. Open it and drag **Chilly Eye** into **Applications**.
+3. Launch it. The first time, macOS says it *could not verify* the app, because it isn't notarized by Apple yet. Click **Done**, then go to **System Settings → Privacy & Security** and click **Open Anyway**. You only need to do this once.
+4. An eye icon with a countdown appears in the menu bar. Turn on *Launch at login* in Settings → General.
+
+The downloadable build doesn't include the widget, because the widget needs a signed build. To get it, build from source (below).
+
+To publish a new version, push a tag: `git tag v1.0.0 && git push origin v1.0.0`. GitHub Actions builds the DMG and attaches it to a Release.
+
+## Build from source
+
+### Build tools
+
 - [Xcode](https://apps.apple.com/app/xcode/id497799835) 16 or later. Open it once to accept the license, then point the command line tools at it:
   ```bash
   sudo xcode-select -s /Applications/Xcode.app
   ```
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`
 
-There is no prebuilt download yet, so you build the app from source.
-
-## Get the code
+### Get the code
 
 ```bash
 git clone https://github.com/ieCecchetti/20-eyes.git
 cd 20-eyes
 ```
 
-## Install
+### Install
 
 1. **Set up signing**, which the widget needs:
    1. In Xcode → Settings → Accounts, add your Apple ID. A free Personal Team is enough.
