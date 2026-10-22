@@ -1,8 +1,41 @@
-# Chilly Eye
+<p align="center">
+  <img src="App/Assets.xcassets/AppIcon.appiconset/icon_128x128@2x.png" width="128" alt="Chilly Eye icon">
+</p>
 
-A macOS menu bar app for break reminders, built around the **20-20-20 rule**: every 20 minutes, look at something 20 feet (6 m) away for 20 seconds. You can add as many other timers as you like (posture, water, stretch, pomodoro, countdowns, breaks at fixed clock times).
+<h1 align="center">Chilly Eye</h1>
 
-Native Swift / SwiftUI, macOS 14+, with a WidgetKit widget.
+<p align="center">
+  <b>Rest your eyes, fix your posture, drink your water.</b><br>
+  A macOS menu bar app for break reminders, built around the 20-20-20 rule.
+</p>
+
+<p align="center">
+  <a href="https://github.com/ieCecchetti/20-eyes/releases/latest"><img src="https://img.shields.io/github/v/release/ieCecchetti/20-eyes?label=download&color=34C759" alt="Latest release"></a>
+  <img src="https://img.shields.io/badge/macOS-14%2B-000?logo=apple" alt="macOS 14+">
+  <img src="https://img.shields.io/badge/Apple%20Silicon-M1%2B-555" alt="Apple Silicon">
+  <img src="https://img.shields.io/badge/Swift-SwiftUI-F05138?logo=swift&logoColor=white" alt="Swift">
+  <img src="https://img.shields.io/github/license/ieCecchetti/20-eyes" alt="MIT license">
+</p>
+
+<p align="center">
+  <img src="docs/images/overlay.jpg" width="820" alt="Full-screen break overlay with a countdown">
+</p>
+
+> **The 20-20-20 rule:** every 20 minutes, look at something 20 feet (6 m) away for 20 seconds.
+> Chilly Eye reminds you, and you can add as many other timers as you like: posture, water, stretch, pomodoro, countdowns, or breaks at fixed clock times.
+
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/images/menu.png" width="340" alt="Menu bar dropdown"><br><sub>Every timer in the menu bar, soonest first</sub></td>
+    <td align="center"><img src="docs/images/widget.png" width="340" alt="Desktop widget"><br><sub>The next 3 timers as a desktop widget</sub></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="docs/images/popup.png" width="340" alt="Popup break"><br><sub>A small popup instead of the full-screen overlay</sub></td>
+    <td align="center"><img src="docs/images/new-timer.png" width="300" alt="New timer form"><br><sub>Pick a category and it fills in the defaults</sub></td>
+  </tr>
+</table>
 
 ## Features
 
@@ -105,3 +138,4 @@ cd Core && swift test
 | `App/` | Menu bar app: timer engine, break overlay/popup, settings, idle/call detection, hotkey |
 | `Widget/` | WidgetKit extension |
 | `project.yml` | XcodeGen spec (the `.xcodeproj` is generated, not committed) |
+| `scripts/` | `make-dmg.sh` (release DMG) and `render-screenshots.sh` (regenerates `docs/images`) |
