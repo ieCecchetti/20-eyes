@@ -125,11 +125,11 @@ final class TimerEngine {
     // MARK: Actions
 
     func save(_ timer: BreakTimer) {
-        var t = timer
-        if !t.isPaused { t.restart(now: .now) }
-        if let i = state.timers.firstIndex(where: { $0.id == t.id }) {
-            state.timers[i] = t
+        if let i = state.timers.firstIndex(where: { $0.id == timer.id }) {
+            state.timers[i] = state.timers[i].applyingEdit(timer, now: .now)
         } else {
+            var t = timer
+            t.restart(now: .now)
             state.timers.append(t)
         }
     }
