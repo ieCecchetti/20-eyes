@@ -27,6 +27,8 @@ targets:
     info:
       path: App/Info.plist
       properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDisplayName: Chilly Eye
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.healthcare-fitness
@@ -52,6 +54,8 @@ targets:
     info:
       path: Widget/Info.plist
       properties:
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CFBundleDisplayName: Chilly Eye
         AppGroupID: $(TeamIdentifierPrefix)com.cecchetti.chillyeye
         NSExtension:
