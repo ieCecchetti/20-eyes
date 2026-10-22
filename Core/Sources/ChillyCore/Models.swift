@@ -87,6 +87,8 @@ public struct BreakTimer: Codable, Identifiable, Hashable, Sendable {
     public var message: String
     public var style: BreakStyle = .overlay
     public var playSound = true
+    /// Optional so state saved before this setting existed still decodes; nil means allowed.
+    public var allowDone: Bool?
     public var showInMenuBar = true
     public var enabled = true
     public var activeHours: ActiveHours?
@@ -107,6 +109,12 @@ public struct BreakTimer: Codable, Identifiable, Hashable, Sendable {
     }
 
     public var isPaused: Bool { pausedRemaining != nil }
+
+    /// Whether a break with a countdown can be ended early with Done.
+    public var canFinishEarly: Bool {
+        get { allowDone ?? true }
+        set { allowDone = newValue }
+    }
 }
 
 public struct AppSettings: Codable, Hashable, Sendable {
