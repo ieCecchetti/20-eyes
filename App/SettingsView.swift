@@ -9,6 +9,7 @@ struct SettingsView: View {
             CategoriesTab().tabItem { Label("Categories", systemImage: "square.grid.2x2") }
             GeneralTab().tabItem { Label("General", systemImage: "gearshape") }
             StatsTab().tabItem { Label("Stats", systemImage: "chart.bar") }
+            GuideTab().tabItem { Label("Guide", systemImage: "info.circle") }
         }
         .frame(width: 620, height: 480)
         .onAppear { NSApp.activate(ignoringOtherApps: true) }
