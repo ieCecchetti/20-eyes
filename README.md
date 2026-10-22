@@ -1,103 +1,56 @@
-# Chilly Eye - Break Reminder Application
+# Chilly Eye
 
-Chilly Eye is a simple break reminder application built with Python and Tkinter. It helps you take regular breaks by showing a popup at specified intervals. The application supports snoozing and allows you to customize the snooze duration.
+A macOS menu bar app for break reminders, built around the **20-20-20 rule**: every 20 minutes, look at something 20 feet (6 m) away for 20 seconds. You can add as many other timers as you like (posture, water, stretch, pomodoro, countdowns, breaks at fixed clock times).
 
-## The 20-20-20 Rule
-
-Chilly Eye is designed to help you follow the 20-20-20 Rule, which is a simple guideline to reduce eye strain caused by prolonged screen time:
-
-Every 20 minutes, take a 20-second break.
-Look at something 20 feet away.
-This rule helps relax the eye muscles and prevent digital eye strain, making it an essential practice for those who spend long hours in front of screens.
+Native Swift / SwiftUI, macOS 14+, with a WidgetKit widget.
 
 ## Features
 
-- Displays a popup to remind you to take a break.
-- Follows the 20-20-20 Rule:
-  - Every 20 minutes, take a 20-second break.
-  - Look at something 20 feet away to reduce eye strain.
-- Allows snoozing for a custom duration.
-- Includes an "Exit" button to close the application.
-- Configurable interval between reminders.
+- **Menu bar countdown** for the soonest timer you've pinned ("Show countdown in menu bar" on each timer). Click it to see every timer, sorted by which rings next, with pause / take break now on each.
+- **Many timers, grouped by category.** New timer → pick a category (Eyes, Posture, Water, Stretch, Pomodoro, Countdown, Scheduled, Custom, or your own) → it pre-fills sensible defaults → tweak.
+- **Timer types:** repeating, pomodoro (long break every N rounds), one-shot countdown, scheduled at clock times.
+- **Break style per timer:** full-screen blurred overlay on every display, or a small popup. Skip, snooze, or the break ends by itself when its countdown finishes.
+- **Active hours per timer**, for example Mon–Fri 9:00–18:00.
+- **Smart pausing:**
+  - when you're idle, the screen is locked or the Mac sleeps, timers are held, and repeating timers restart when you return (you already rested)
+  - breaks are postponed during calls (camera or mic in use) and while a fullscreen app is in front
+- **Pause all** for 30 min, 1 h, until tomorrow, or until resumed. Global shortcut **⌃⌥⌘P**.
+- **Stats:** breaks taken / skipped / snoozed per day, and a day streak.
+- **Widget** (medium): the next 3 timers with live countdowns.
+- **Launch at login.**
 
-## Installation and Usage
+## Build and run
 
-## 1. Clone the Repository
+Needs Xcode 16+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
 
-Clone the repository to your local machine:
+1. In Xcode → Settings → Accounts, add your Apple ID. A free Personal Team is enough to run it locally.
+2. Put your team ID in `Config/Local.xcconfig` (git-ignored):
+   ```
+   DEVELOPMENT_TEAM = ABCDE12345
+   ```
+   You can find the team ID in Xcode → Settings → Accounts → your team, or in the Apple Developer portal.
+3. Generate the project and run it:
+   ```bash
+   xcodegen generate
+   open ChillyEye.xcodeproj   # then ⌘R on the "ChillyEye" scheme
+   ```
+4. To add the widget, right-click the desktop → Edit Widgets → search "Chilly Eye".
 
-```bash
-git clone <repository-url>
-cd chilly_eye
-```
+The widget needs a signed build. The app and the widget share their data through an App Group (`<team>.com.cecchetti.chillyeye`), and an unsigned build has no App Group, so the widget would stay empty.
 
-## 2. Install Dependencies
+## Tests
 
-Install the required dependencies using Poetry:
-
-```bash
-poetry install
-```
-
-## 3. Building the Executable
-
-1. Prepare the Icon
-Before building the executable, convert your icon image (alarm.png) to the required .icns format (for macOS) or .ico format (for Windows). Use the following command:
-
-```bash
-poetry run img-converter alarm.png alarm.icns
-```
-
-Then:
-- Replace `alarm.png` with the path to your source image;
-- The output file will be `alarm.icns`;
-
-1. Build the Executable
-Use PyInstaller to create the standalone executable:
+The scheduling, stats and storage logic lives in the `Core` Swift package:
 
 ```bash
-poetry run pyinstaller --clean --onefile --windowed --icon=alarm.icns --add-data "notification.mp3:." chilly_eye/main.py --name "EyeBreakReminder" --noconfirm
+cd Core && swift test
 ```
 
-- --clean: Clears PyInstaller's cache before building.
-- --onefile: Packages everything into a single executable file.
-- --windowed: Ensures the app runs without a terminal window.
-- --icon=alarm.icns: Specifies the custom icon for the application.
-- --noconfirm: Skips confirmation prompts during the build process.
-- --add-data: add the additional file selected to the build. (like the notification)
+## Layout
 
-The executable will be created in the dist folder.
-
-## 4. Running the application
-
-After executed the build..
-
-### MacOS
-
-Open the application using:
-
-```bash
-cd path/to/project
-open dist/EyeBreakReminder.app
-```
-
-want to add it to your programs!? then just go into dist folder >> Right click >> "Make an alias" and bring it in application. Enjoy
-
-### Windows
-
-Open the application using:
-
-```bash
-cd path/to/project
-./dist/EyeBreakReminder
-```
-
-### Alternatively
-
-Navigate to the `dist` folder and double-click the program to run it.
-
-## Notes
-
-Ensure you have the required Python version (^3.10) with tkinter installed.
-The application icon must be in .icns format for macOS and .ico format for Windows.
-If you encounter issues with the icon, ensure it is properly formatted and valid.
+| Path | What |
+|------|------|
+| `Core/` | `ChillyCore` package: models, scheduling, stats, JSON store (shared by app and widget) |
+| `App/` | Menu bar app: timer engine, break overlay/popup, settings, idle/call detection, hotkey |
+| `Widget/` | WidgetKit extension |
+| `project.yml` | XcodeGen spec (the `.xcodeproj` is generated, not committed) |
