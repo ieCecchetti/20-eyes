@@ -168,6 +168,17 @@ final class ChillyCoreTests: XCTestCase {
         XCTAssertNil(off.applyingEdit(edit, now: later).nextFire)
     }
 
+    func testStateWithRemovedFullscreenSettingStillLoads() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try Store.save(AppState.makeDefault(), to: "state.json", in: dir)
+        let url = dir.appendingPathComponent("state.json")
+        let old = try String(contentsOf: url, encoding: .utf8)
+            .replacingOccurrences(of: "\"settings\":{", with: "\"settings\":{\"postponeDuringFullscreen\":true,")
+        XCTAssertTrue(old.contains("postponeDuringFullscreen"))
+        try old.write(to: url, atomically: true, encoding: .utf8)
+        XCTAssertNotNil(Store.load(AppState.self, from: "state.json", in: dir))
+    }
+
     func testFormatCountdown() {
         XCTAssertEqual(formatCountdown(59.2), "1:00")
         XCTAssertEqual(formatCountdown(20 * 60), "20:00")

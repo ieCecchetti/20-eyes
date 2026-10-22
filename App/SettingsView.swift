@@ -95,7 +95,6 @@ private struct GeneralTab: View {
             }
             Section("Don't interrupt") {
                 Toggle("Postpone breaks during calls (camera or mic in use)", isOn: $engine.state.settings.postponeDuringCalls)
-                Toggle("Postpone breaks while a fullscreen app is in front", isOn: $engine.state.settings.postponeDuringFullscreen)
             }
             Section("Breaks") {
                 LabeledContent("Snooze length (minutes)") {

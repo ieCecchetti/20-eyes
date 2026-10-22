@@ -11,7 +11,6 @@ enum Presence {
 
     static func postponeReason(_ settings: AppSettings) -> String? {
         if settings.postponeDuringCalls && (micInUse || cameraInUse) { return "In a call" }
-        if settings.postponeDuringFullscreen && frontmostIsFullscreen { return "Fullscreen app" }
         return nil
     }
 
@@ -43,24 +42,6 @@ enum Presence {
             var running: UInt32 = 0
             var used = UInt32(MemoryLayout<UInt32>.size)
             return CMIOObjectGetPropertyData(device, &addr, 0, nil, used, &used, &running) == noErr && running != 0
-        }
-    }
-
-    // ponytail: heuristic — a frontmost-app window covering a whole screen; misses apps that fake fullscreen smaller.
-    static var frontmostIsFullscreen: Bool {
-        guard let pid = NSWorkspace.shared.frontmostApplication?.processIdentifier,
-              pid != ProcessInfo.processInfo.processIdentifier,
-              let windows = CGWindowListCopyWindowInfo([.optionOnScreenOnly, .excludeDesktopElements], kCGNullWindowID)
-                as? [[String: Any]]
-        else { return false }
-        let screens = NSScreen.screens.map(\.frame.size)
-        return windows.contains { w in
-            guard (w[kCGWindowOwnerPID as String] as? pid_t) == pid,
-                  (w[kCGWindowLayer as String] as? Int) == 0,
-                  let dict = w[kCGWindowBounds as String] as? NSDictionary,
-                  let bounds = CGRect(dictionaryRepresentation: dict)
-            else { return false }
-            return screens.contains(bounds.size)
         }
     }
 }
