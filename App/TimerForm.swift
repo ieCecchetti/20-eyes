@@ -30,6 +30,9 @@ struct TimerForm: View {
                         ForEach(BreakStyle.allCases, id: \.self) { Text($0.label).tag($0) }
                     }
                     .pickerStyle(.segmented)
+                    if timer.kind == .pomodoro || timer.breakDuration > 0 {
+                        Toggle("Allow Done before the break ends", isOn: $timer.canFinishEarly)
+                    }
                     Toggle("Play sound", isOn: $timer.playSound)
                     Toggle("Show countdown in menu bar", isOn: $timer.showInMenuBar)
                 }

@@ -37,9 +37,10 @@ struct BreakView: View {
                     .font(.system(size: overlay ? 56 : 24, weight: .semibold, design: .rounded).monospacedDigit())
             }
             HStack {
-                if end == nil {
+                if end == nil || timer.canFinishEarly { // an alert always needs a way to close
                     Button("Done") { finish(.taken) }.keyboardShortcut(.defaultAction)
-                } else {
+                }
+                if end != nil {
                     Button("Skip") { finish(.skipped) }.keyboardShortcut(.cancelAction)
                 }
                 Button("Snooze \(Int(snoozeMinutes)) min") { finish(.snoozed) }

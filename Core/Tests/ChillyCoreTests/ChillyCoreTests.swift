@@ -127,6 +127,17 @@ final class ChillyCoreTests: XCTestCase {
         XCTAssertEqual(today[5].taken, 1)
     }
 
+    func testStateSavedBeforeAllowDoneStillLoads() throws {
+        let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        var state = AppState.makeDefault()
+        state.timers[0].allowDone = nil
+        try Store.save(state, to: "state.json", in: dir)
+        let raw = try String(contentsOf: dir.appendingPathComponent("state.json"), encoding: .utf8)
+        XCTAssertFalse(raw.contains("allowDone")) // same shape as a pre-1.0.1 file
+        let loaded = try XCTUnwrap(Store.load(AppState.self, from: "state.json", in: dir))
+        XCTAssertTrue(loaded.timers[0].canFinishEarly)
+    }
+
     func testFormatCountdown() {
         XCTAssertEqual(formatCountdown(59.2), "1:00")
         XCTAssertEqual(formatCountdown(20 * 60), "20:00")
