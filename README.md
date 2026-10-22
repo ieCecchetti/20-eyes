@@ -19,24 +19,60 @@ Native Swift / SwiftUI, macOS 14+, with a WidgetKit widget.
 - **Widget** (medium): the next 3 timers with live countdowns.
 - **Launch at login.**
 
-## Build and run
+## Requirements
 
-Needs Xcode 16+ and [XcodeGen](https://github.com/yonaskolb/XcodeGen) (`brew install xcodegen`).
+- macOS 14 Sonoma or later
+- [Xcode](https://apps.apple.com/app/xcode/id497799835) 16 or later. Open it once to accept the license, then point the command line tools at it:
+  ```bash
+  sudo xcode-select -s /Applications/Xcode.app
+  ```
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`
 
-1. In Xcode → Settings → Accounts, add your Apple ID. A free Personal Team is enough to run it locally.
-2. Put your team ID in `Config/Local.xcconfig` (git-ignored):
-   ```
-   DEVELOPMENT_TEAM = ABCDE12345
-   ```
-   You can find the team ID in Xcode → Settings → Accounts → your team, or in the Apple Developer portal.
-3. Generate the project and run it:
+There is no prebuilt download yet, so you build the app from source.
+
+## Get the code
+
+```bash
+git clone https://github.com/ieCecchetti/20-eyes.git
+cd 20-eyes
+```
+
+## Install
+
+1. **Set up signing**, which the widget needs:
+   1. In Xcode → Settings → Accounts, add your Apple ID. A free Personal Team is enough.
+   2. Copy your team ID (shown under the account, or in the Apple Developer portal) into `Config/Local.xcconfig`. That file is git-ignored.
+      ```bash
+      echo "DEVELOPMENT_TEAM = ABCDE12345" > Config/Local.xcconfig
+      ```
+2. **Build a release copy and install it:**
    ```bash
    xcodegen generate
-   open ChillyEye.xcodeproj   # then ⌘R on the "ChillyEye" scheme
+   xcodebuild -project ChillyEye.xcodeproj -scheme ChillyEye -configuration Release \
+     -derivedDataPath build -allowProvisioningUpdates build
+   cp -R "build/Build/Products/Release/Chilly Eye.app" /Applications/
+   open "/Applications/Chilly Eye.app"
    ```
-4. To add the widget, right-click the desktop → Edit Widgets → search "Chilly Eye".
+   An eye icon with a countdown appears in the menu bar.
+3. **Optional extras:**
+   - Turn on *Launch at login* in Settings → General.
+   - Add the widget: right-click the desktop → Edit Widgets → search "Chilly Eye".
 
-The widget needs a signed build. The app and the widget share their data through an App Group (`<team>.com.cecchetti.chillyeye`), and an unsigned build has no App Group, so the widget would stay empty.
+The widget needs a signed build. The app and the widget share their data through an App Group (`<team>.com.cecchetti.chillyeye`), and an unsigned build has no App Group, so the widget stays empty.
+
+**Quick try without signing (no widget):**
+
+```bash
+xcodegen generate
+xcodebuild -project ChillyEye.xcodeproj -scheme ChillyEye -derivedDataPath build CODE_SIGNING_ALLOWED=NO build
+open "build/Build/Products/Debug/Chilly Eye.app"
+```
+
+**Uninstall:** quit Chilly Eye from its menu, delete `/Applications/Chilly Eye.app`, then remove its data at `~/Library/Group Containers/<team>.com.cecchetti.chillyeye`.
+
+## Develop
+
+Run `xcodegen generate && open ChillyEye.xcodeproj`, then press ⌘R on the "ChillyEye" scheme. Run `xcodegen generate` again after you add or remove files, because the `.xcodeproj` is generated from `project.yml`.
 
 ## Tests
 
