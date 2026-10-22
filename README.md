@@ -61,12 +61,11 @@
 
 1. Get the latest `ChillyEye-x.y.z.dmg` from [Releases](https://github.com/ieCecchetti/20-eyes/releases/latest).
 2. Open it and drag **Chilly Eye** into **Applications**.
-3. Launch it. The first time, macOS says it *could not verify* the app, because it isn't notarized by Apple yet. Click **Done**, then go to **System Settings → Privacy & Security** and click **Open Anyway**. You only need to do this once.
+3. Launch it. The app is signed and notarized by Apple, so it opens without warnings.
 4. An eye icon with a countdown appears in the menu bar. Turn on *Launch at login* in Settings → General.
+5. Optional: add the widget. Right-click the desktop → Edit Widgets → search "Chilly Eye".
 
-The downloadable build doesn't include the widget, because the widget needs a signed build. To get it, build from source (below).
-
-To publish a new version, push a tag: `git tag v1.0.0 && git push origin v1.0.0`. GitHub Actions builds the DMG and attaches it to a Release.
+To publish a new version, push a tag: `git tag v1.2.3 && git push origin v1.2.3`. GitHub Actions builds, signs and notarizes the DMG and attaches it to a Release. This needs the repository secrets `MACOS_CERT_P12`, `MACOS_CERT_PASSWORD`, `TEAM_ID`, `NOTARY_APPLE_ID` and `NOTARY_PASSWORD`.
 
 ## Build from source
 
