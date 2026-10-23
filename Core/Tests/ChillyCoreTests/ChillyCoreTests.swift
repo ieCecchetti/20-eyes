@@ -78,16 +78,19 @@ final class ChillyCoreTests: XCTestCase {
         XCTAssertFalse(state.isPausedAll)
     }
 
-    func testResetAfterRestOnlyTouchesRepeating() {
+    func testResetAfterRestRestartsRepeatingAndPomodoroOnly() {
         let now = date(2026, 10, 22, 10)
         var state = AppState.makeDefault(now: now)
         var countdown = BreakTimer(category: category(.countdown))
         countdown.restart(now: now)
-        state.timers.append(countdown)
-        let later = now.addingTimeInterval(600)
+        var pomodoro = BreakTimer(category: category(.pomodoro))
+        pomodoro.restart(now: now)
+        state.timers += [countdown, pomodoro]
+        let later = now.addingTimeInterval(8 * 3600) // a night of sleep
         state.resetAfterRest(now: later)
         XCTAssertEqual(state.timers[0].nextFire, later.addingTimeInterval(20 * 60))
         XCTAssertEqual(state.timers[1].nextFire, now.addingTimeInterval(15 * 60))
+        XCTAssertEqual(state.timers[2].nextFire, later.addingTimeInterval(25 * 60))
     }
 
     func testSortedTimersRunningThenPausedThenDisabled() {
