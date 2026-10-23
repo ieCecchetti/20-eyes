@@ -21,7 +21,7 @@ struct GuideTab: View {
         Topic(symbol: "pencil", title: "Editing a timer",
               text: "Changing the type, interval or clock times restarts the countdown. Any other change, like the message, style or Allow Done, keeps it running."),
         Topic(symbol: "moon.zzz", title: "When you're away",
-              text: "If you're idle, the screen is locked or the Mac sleeps, timers wait. Repeating timers start over when you come back, because you already rested."),
+              text: "If you're idle, the screen is locked or the Mac sleeps, breaks wait. Repeating and Pomodoro timers start over when you come back, because you already rested. Countdown and Scheduled timers follow the real clock, so they still ring on time."),
         Topic(symbol: "video", title: "During calls",
               text: "While your camera or microphone is in use, a due break waits until the call ends. Fullscreen apps don't hold breaks back."),
         Topic(symbol: "calendar.badge.clock", title: "Active hours",

@@ -123,9 +123,11 @@ public extension AppState {
         pausedUntil = nil
     }
 
-    /// Back from being away: repeating timers restart, since you already rested.
+    /// Back from being away: repeating and pomodoro timers restart, since you already rested.
+    /// Countdown and scheduled timers follow the real clock, so they keep running.
     mutating func resetAfterRest(now: Date) {
-        for i in timers.indices where timers[i].kind == .repeating && timers[i].enabled && !timers[i].isPaused {
+        for i in timers.indices where [.repeating, .pomodoro].contains(timers[i].kind)
+            && timers[i].enabled && !timers[i].isPaused {
             timers[i].scheduleNext(from: now)
         }
     }

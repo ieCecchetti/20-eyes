@@ -48,7 +48,7 @@
   - **Snooze:** brings it back a few minutes later.
 - **Active hours per timer**, for example Mon–Fri 9:00–18:00.
 - **Smart pausing:**
-  - when you're idle, the screen is locked or the Mac sleeps, timers are held, and repeating timers restart when you return (you already rested)
+  - when you're idle, the screen is locked or the Mac sleeps, breaks wait. Repeating and Pomodoro timers start over when you return (you already rested); Countdown and Scheduled timers follow the real clock
   - breaks wait while you're in a call (camera or mic in use). Fullscreen apps, like an editor, do **not** hold breaks back.
 - **Pause all** for 30 min, 1 h, until tomorrow, or until resumed. Global shortcut **⌃⌥⌘P**.
 - **Stats:** breaks taken / skipped / snoozed per day, and a day streak.
